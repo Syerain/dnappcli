@@ -1,6 +1,6 @@
 go 1.26.4
 
-module github.com/atomreforge/dnappcli
+module github.com/Syerain/dnappcli
 
 require github.com/spf13/cobra v1.10.2
 

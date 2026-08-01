@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/atomreforge/dnappcli/internal/client"
-	"github.com/atomreforge/dnappcli/internal/model"
+	"github.com/Syerain/dnappcli/internal/client"
+	"github.com/Syerain/dnappcli/internal/model"
 
 	"github.com/spf13/cobra"
 )
