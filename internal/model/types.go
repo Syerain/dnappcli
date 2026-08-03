@@ -17,3 +17,23 @@ type RegisterBody struct {
 type Response struct {
 	Message string `json:"message"`
 }
+
+// LoginBody 与 server internal/model/LoginBody 结构一致，
+// 用于构造 /api/login 的请求体。
+type LoginBody struct {
+	Loginway string `json:"loginway"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// LoginResponse 对应 /api/login 成功时的返回体。
+type LoginResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+// TokenData 对应保存在 data.yaml 中的 token 信息。
+type TokenData struct {
+	AccessToken  string `yaml:"access_token"`
+	RefreshToken string `yaml:"refresh_token"`
+}
