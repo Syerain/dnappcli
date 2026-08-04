@@ -1,0 +1,11 @@
+main:
+  isDebugMode: true
+
+log:
+  isColored: true
+
+# registercodeEnckey 是签发注册码所用的 ed25519 私钥（十六进制）。
+# 该 key 必须与 server 端 security.registercodeEnckey 保持一致，
+# 否则 server 无法验签通过 appcli 生成的注册码。
+security:
+  registercodeEnckey: "5000a5e9ff9848eda76af157039e8dc45f9c1b51903c4fbe4c77b0964f5569a5"

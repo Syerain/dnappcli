@@ -37,18 +37,35 @@ func init() {
 }
 
 func runLogin(cmd *cobra.Command, args []string) error {
+	// REPL 模式：按位置传参 login <username> <password>
+	if len(args) >= 2 {
+		return DoLogin(ServerURL(), args[0], args[1])
+	}
+
+	// 一次性模式下使用 flags
 	if err := validateLoginFlags(); err != nil {
 		return err
 	}
+	return DoLogin(ServerURL(), loginFlags.username, loginFlags.password)
+}
+
+// DoLogin 执行登录逻辑，供 REPL 和 Cobra 命令共用。
+func DoLogin(serverURL, username, password string) error {
+	if username == "" {
+		return fmt.Errorf("用户名不能为空")
+	}
+	if password == "" {
+		return fmt.Errorf("密码不能为空")
+	}
 
 	body := model.LoginBody{
-		Loginway: loginFlags.loginway,
-		Username: loginFlags.username,
-		Password: loginFlags.password,
+		Loginway: "legacy",
+		Username: username,
+		Password: password,
 	}
 
 	ctx := context.Background()
-	c := client.New(serverURL())
+	c := client.New(serverURL)
 	code, respBody, err := c.PostJSON(ctx, "/api/login", body)
 	if err != nil {
 		return fmt.Errorf("login request failed: %w", err)
