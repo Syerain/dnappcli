@@ -17,7 +17,10 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/labstack/echo-jwt/v5 v5.0.2 // indirect
+	github.com/labstack/echo/v5 v5.2.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mcuadros/go-defaults v1.2.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
@@ -31,4 +34,5 @@ require (
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/term v0.45.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/time v0.15.0 // indirect
 )
