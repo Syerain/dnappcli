@@ -24,19 +24,31 @@ func New(baseURL string) *Client {
 	}
 }
 
-// PostJSON 向 path 发送 JSON POST 请求，body 会序列化为 JSON。
+// DoJSON 是通用请求入口：method 为 http.MethodGet/Post 等；
+// path 如 "/api/v1/user/me"；token 非空时自动带 Authorization: Bearer <token>；
+// body 为 nil 时不带请求体，否则序列化为 JSON。
 // 返回 HTTP 状态码与原始响应体字节。
-func (c *Client) PostJSON(ctx context.Context, path string, body any) (statusCode int, respBody []byte, err error) {
-	payload, err := json.Marshal(body)
-	if err != nil {
-		return 0, nil, fmt.Errorf("marshal request body: %w", err)
+func (c *Client) DoJSON(ctx context.Context, method, path, token string, body any) (statusCode int, respBody []byte, err error) {
+	var reader io.Reader
+	if body != nil {
+		payload, err := json.Marshal(body)
+		if err != nil {
+			return 0, nil, fmt.Errorf("marshal request body: %w", err)
+		}
+		reader = bytes.NewReader(payload)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+path, bytes.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, reader)
 	if err != nil {
 		return 0, nil, fmt.Errorf("build request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/json")
+
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
+	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -50,4 +62,14 @@ func (c *Client) PostJSON(ctx context.Context, path string, body any) (statusCod
 	}
 
 	return resp.StatusCode, data, nil
+}
+
+// PostJSON 向 path 发送带可选 token 的 JSON POST 请求。
+func (c *Client) PostJSON(ctx context.Context, path, token string, body any) (statusCode int, respBody []byte, err error) {
+	return c.DoJSON(ctx, http.MethodPost, path, token, body)
+}
+
+// GetJSON 向 path 发送带可选 token 的 GET 请求。
+func (c *Client) GetJSON(ctx context.Context, path, token string) (statusCode int, respBody []byte, err error) {
+	return c.DoJSON(ctx, http.MethodGet, path, token, nil)
 }

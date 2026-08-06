@@ -21,11 +21,11 @@ var registerFlags struct {
 	registerway  string
 }
 
-// registerCmd 对应 POST /api/register。
+// registerCmd 对应 POST /api/v1/register。
 var registerCmd = &cobra.Command{
 	Use:   "register",
 	Short: "注册新用户",
-	Long:  "调用 server 的 /api/register 接口注册新用户。若未提供注册码则自动用 config 的 key 生成。",
+	Long:  "调用 server 的 /api/v1/register 接口注册新用户。若未提供注册码则自动用 config 的 key 生成。",
 	RunE:  runRegister,
 }
 
@@ -98,7 +98,7 @@ func DoRegister(serverURL, username, password, nickname, rc string) error {
 
 	ctx := context.Background()
 	c := client.New(serverURL)
-	code, respBody, err := c.PostJSON(ctx, "/api/register", body)
+	code, respBody, err := c.PostJSON(ctx, "/api/v1/register", "", body)
 	if err != nil {
 		return fmt.Errorf("register request failed: %w", err)
 	}

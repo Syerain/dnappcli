@@ -37,3 +37,22 @@ type TokenData struct {
 	AccessToken  string `yaml:"access_token"`
 	RefreshToken string `yaml:"refresh_token"`
 }
+
+// InfoMe 对应 server GET /api/v1/user/me 成功时返回的用户信息体。
+// server 的 InfoMeResponse 内嵌 model.InfoMe，JSON 序列化会平铺展开，
+// 因此这里以扁平结构对齐（RegisterTime 对应 server 的 time.Time -> JSON 字符串）。
+type InfoMe struct {
+	Uid          uint   `json:"uid"`
+	Username     string `json:"username"`
+	Nickname     string `json:"nickname"`
+	Email        string `json:"email"`
+	RegisterTime string `json:"register_time"`
+	Role         string `json:"role"`
+	GitHubID     *int64 `json:"github_id"`
+	GitHubLogin  string `json:"github_login"`
+}
+
+// MeResponse 对应 GET /api/v1/user/me 的响应体。
+type MeResponse struct {
+	InfoMe
+}

@@ -4,13 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/Syerain/dnappcli/internal/client"
 	"github.com/Syerain/dnappcli/internal/model"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 var loginFlags struct {
@@ -19,11 +17,11 @@ var loginFlags struct {
 	loginway string
 }
 
-// loginCmd 对应 POST /api/login。
+// loginCmd 对应 POST /api/v1/login。
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "用户登录",
-	Long:  "调用 server 的 /api/login 接口登录，成功后 token 保存到 data.yaml。",
+	Long:  "调用 server 的 /api/v1/login 接口登录，成功后 token 保存到 data.yaml。",
 	RunE:  runLogin,
 }
 
@@ -66,7 +64,7 @@ func DoLogin(serverURL, username, password string) error {
 
 	ctx := context.Background()
 	c := client.New(serverURL)
-	code, respBody, err := c.PostJSON(ctx, "/api/login", body)
+	code, respBody, err := c.PostJSON(ctx, "/api/v1/login", "", body)
 	if err != nil {
 		return fmt.Errorf("login request failed: %w", err)
 	}
@@ -82,7 +80,7 @@ func DoLogin(serverURL, username, password string) error {
 		fmt.Printf("access_token:  %s\n", loginResp.AccessToken)
 		fmt.Printf("refresh_token: %s\n", loginResp.RefreshToken)
 
-		if err := saveTokenData(loginResp.AccessToken, loginResp.RefreshToken); err != nil {
+		if err := SaveTokenData(loginResp.AccessToken, loginResp.RefreshToken); err != nil {
 			return fmt.Errorf("save token data: %w", err)
 		}
 		fmt.Println("token 已保存到 data.yaml")
@@ -108,24 +106,5 @@ func validateLoginFlags() error {
 	if loginFlags.loginway != "legacy" && loginFlags.loginway != "oauth-github" {
 		return fmt.Errorf("--loginway 必须为 legacy 或 oauth-github")
 	}
-	return nil
-}
-
-// saveTokenData 将 access_token 和 refresh_token 写入 data.yaml。
-func saveTokenData(accessToken, refreshToken string) error {
-	data := model.TokenData{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-
-	yamlBytes, err := yaml.Marshal(&data)
-	if err != nil {
-		return fmt.Errorf("marshal yaml: %w", err)
-	}
-
-	if err := os.WriteFile("data.yaml", yamlBytes, 0600); err != nil {
-		return fmt.Errorf("write data.yaml: %w", err)
-	}
-
 	return nil
 }

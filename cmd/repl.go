@@ -35,7 +35,6 @@ func (t *terminal) restore() {
 	}
 }
 
-
 // lineEditor 维护当前输入行的文本与光标位置。
 type lineEditor struct {
 	buf    []rune
@@ -146,7 +145,7 @@ func (e *lineEditor) tabComplete() bool {
 	if strings.Contains(s, " ") {
 		return false
 	}
-	names := []string{"login", "register", "registercode", "help", "exit"}
+	names := []string{"login", "register", "registercode", "me", "sudo", "help", "exit"}
 	for _, n := range names {
 		if len(s) > 0 && strings.HasPrefix(n, s) {
 			e.buf = []rune(n)
@@ -295,7 +294,7 @@ func clearLine() {
 // isExitCommand 判断是否为退出命令。
 func isExitCommand(s string) bool {
 	s = strings.TrimSpace(strings.ToLower(s))
-	return s == "exit" || s == "quit"
+	return s == "exit" || s == "quit" || s == "q"
 }
 
 // isHelpCommand 判断是否为帮助命令。
@@ -337,18 +336,18 @@ type key struct {
 	escSequence string
 }
 
-func (k key) isEnter()        bool { return k.r == '\r' || k.r == '\n' }
-func (k key) isPrintable()    bool { return k.r >= 0x20 && k.r != 0x7f }
-func (k key) isEOF()          bool { return k.r == 0x04 } // Ctrl-D
-func (k key) isTab()          bool { return k.r == 0x09 }
-func (k key) isCtrlU()        bool { return k.r == 0x15 }
-func (k key) isUp()           bool { return k.escSequence == "[A" }
-func (k key) isDown()         bool { return k.escSequence == "[B" }
-func (k key) isRight()        bool { return k.escSequence == "[C" }
-func (k key) isLeft()         bool { return k.escSequence == "[D" }
-func (k key) isHome()         bool { return k.escSequence == "[H" || k.escSequence == "[1~" }
-func (k key) isEnd()          bool { return k.escSequence == "[F" || k.escSequence == "[4~" }
-func (k key) isDelete()       bool { return k.r == 0x7f }
+func (k key) isEnter() bool         { return k.r == '\r' || k.r == '\n' }
+func (k key) isPrintable() bool     { return k.r >= 0x20 && k.r != 0x7f }
+func (k key) isEOF() bool           { return k.r == 0x04 } // Ctrl-D
+func (k key) isTab() bool           { return k.r == 0x09 }
+func (k key) isCtrlU() bool         { return k.r == 0x15 }
+func (k key) isUp() bool            { return k.escSequence == "[A" }
+func (k key) isDown() bool          { return k.escSequence == "[B" }
+func (k key) isRight() bool         { return k.escSequence == "[C" }
+func (k key) isLeft() bool          { return k.escSequence == "[D" }
+func (k key) isHome() bool          { return k.escSequence == "[H" || k.escSequence == "[1~" }
+func (k key) isEnd() bool           { return k.escSequence == "[F" || k.escSequence == "[4~" }
+func (k key) isDelete() bool        { return k.r == 0x7f }
 func (k key) isForwardDelete() bool { return k.escSequence == "[3~" }
 
 // readKey 从 stdin 读取一个键（含 ANSI 转义序列）。
@@ -411,6 +410,8 @@ func printREPLHelp() {
 	fmt.Print("  login <username> <password>           用户登录\r\n")
 	fmt.Print("  register <username> <password> <nickname> [registercode]  注册新用户（注册码可选，留空自动生成）\r\n")
 	fmt.Print("  registercode [--magicword X] [--expire 60m]  生成注册码\r\n")
+	fmt.Print("  me                                     获取当前登录用户信息\r\n")
+	fmt.Print("  sudo                                   访问管理员接口（需 admin 角色）\r\n")
 	fmt.Print("  help                                   显示帮助\r\n")
 	fmt.Print("  exit / quit                            退出\r\n")
 	fmt.Print("\r\n")
@@ -418,4 +419,3 @@ func printREPLHelp() {
 	fmt.Print("登录成功后 token 会保存到 data.yaml。\r\n")
 	fmt.Print("\r\n")
 }
-
