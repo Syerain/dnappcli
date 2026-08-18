@@ -3,3 +3,6 @@ data.yaml
 
 # 构建产物
 dnappcli
+
+# config
+config.yaml
