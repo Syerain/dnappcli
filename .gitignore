@@ -3,6 +3,9 @@ data.yaml
 
 # 构建产物
 dnappcli
+dnappcli-x64-windows.exe
+dnappcli-x64-linux
+dnappcli-arm64-darwin
 
 # config
 config.yaml
